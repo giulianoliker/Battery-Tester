@@ -59,7 +59,7 @@ void setup()
   Serial.println("Card initialized.");
 }
 
-// Add preceding zero if the time value is in the single digit
+// Add leading zero if the time value is in the single digit
 void printDigits(int digits)
 {
   if (digits < 10)
@@ -115,9 +115,11 @@ void loop()
   // If the file is available, write to it
   if (dataFile)
   {
-    dataFile.print(finalVoltage);
+    dataFile.print(hour());
+    dataFile.print(":");
+    dataFile.print(minute());
     dataFile.print(",");
-    dataFile.println(elapsedTime);
+    dataFile.println(finalVoltage);
     dataFile.close();
   }
   // If unable to read the file, display an error
