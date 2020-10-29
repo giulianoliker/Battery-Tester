@@ -4,21 +4,26 @@
 
   This program measures the voltage of the battery and logs the time and the voltage into the file on the SD card in predetermied intervals.
   The idea is to provide a constant load on the battery and measure performance for comparisson purpose.
+
+  TO DO: Automatically stop measurement when the voltage is zero for more than 1 minute.
 */
 
 #include <Arduino.h>
 #include <SD.h>
 #include <SPI.h>
 
-int SDpin = 10;     // Pin 10 on Arduino Uno
-float finalVoltage; // Store measured voltage
+const int SDpin = 10;        // Pin 10 on Arduino Uno
+const byte voltagePin = A0;  // Pin to measure voltage
+float finalVoltage;          // Store measured voltage
+int elapsedTime;             // Store elapsed time
+int timeCheckInterval = 500; // How often to check the voltage (miliseconds)
 
 void setup()
 {
 
   Serial.begin(9600);
-  pinMode(A0, INPUT);     // Input for voltage measurement
-  pinMode(SDpin, OUTPUT); // SD card pin
+  pinMode(voltagePin, INPUT); // Input for voltage measurement
+  pinMode(SDpin, OUTPUT);     // Set output to the SD card pin
 
   // Open serial communications and wait for port to open
   while (!Serial)
@@ -43,28 +48,33 @@ void loop()
 {
   // Calculate voltage
   finalVoltage = (analogRead(A0) * 5.00) / 1023.00;
+  elapsedTime = millis() / 1000;
 
   // Display values on serial
-  Serial.print("Voltage = ");
+  Serial.print("Voltage: ");
   Serial.print(finalVoltage);
-  Serial.println("V");
+  Serial.print("V");
+  Serial.print("\t");
+  Serial.print("Time: ");
+  Serial.print(elapsedTime);
+  Serial.println(" seconds");
 
-  // Write values to SD card
-  // open the file. note that only one file can be open at a time,
-  // so you have to close this one before opening another.
+  // Open the file
   File dataFile = SD.open("batTest.txt", FILE_WRITE);
 
-  // if the file is available, write to it:
+  // If the file is available, write to it
   if (dataFile)
   {
-    dataFile.println(finalVoltage);
+    dataFile.print(finalVoltage);
+    dataFile.print(",");
+    dataFile.println(elapsedTime);
     dataFile.close();
   }
-  // if the file isn't open, pop up an error:
+  // If unable to read the file, display an error
   else
   {
     Serial.println("Error opening file on the SD card!");
   }
 
-  delay(200);
+  delay(timeCheckInterval);
 }
