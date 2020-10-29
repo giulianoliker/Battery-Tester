@@ -16,12 +16,13 @@
 #include <LiquidCrystal.h>
 #include <SD.h>
 #include <SPI.h>
+#include <Time.h>
 
 const int SDpin = 10;                // Pin 10 on Arduino Uno
 const byte voltagePin = A0;          // Pin to measure voltage
 float finalVoltage;                  // Store measured voltage
 int elapsedTime;                     // Store elapsed time
-int timeCheckInterval = 500;         // How often to check the voltage (miliseconds)
+int timeCheckInterval = 1000;        // How often to check the voltage (miliseconds)
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7); // initialize the library with the numbers of the interface pins
 
 void setup()
@@ -32,9 +33,9 @@ void setup()
   pinMode(SDpin, OUTPUT);     // Set output to the SD card pin
 
   // LCD start message
-  lcd.begin(16, 2); // Set up the LCD's number of columns and rows: 
+  lcd.begin(16, 2);
   lcd.print("BATTERY TESTER");
-  lcd.setCursor(0, 1); // Set cursor position
+  lcd.setCursor(0, 1);
   lcd.print("By Giuliano");
   delay(2000);
   lcd.clear();
@@ -58,6 +59,30 @@ void setup()
   Serial.println("Card initialized.");
 }
 
+// Add preceding zero if the time value is in the single digit
+void printDigits(int digits)
+{
+  if (digits < 10)
+    lcd.print('0');
+  lcd.print(digits);
+}
+
+void printToLCD()
+{
+  lcd.setCursor(12, 0);
+  lcd.print("TIME");
+  lcd.setCursor(8, 1);
+  printDigits(hour());
+  lcd.setCursor(10, 1);
+  lcd.print(":");
+  lcd.setCursor(11, 1);
+  printDigits(minute());
+  lcd.setCursor(13, 1);
+  lcd.print(":");
+  lcd.setCursor(14, 1);
+  printDigits(second());
+}
+
 void loop()
 {
   // Calculate voltage
@@ -73,11 +98,16 @@ void loop()
   Serial.print(elapsedTime);
   Serial.println(" seconds");
 
-  // Display values on LCD
+  // Display battery 1 values on the LCD
   lcd.clear();
-  lcd.print("BAT1");
+  lcd.print("BATT1");
   lcd.setCursor(0, 1);
   lcd.print(finalVoltage);
+  lcd.setCursor(4, 1);
+  lcd.print("V");
+
+  // Display elapsed time on the LCD
+  printToLCD();
 
   // Open the file
   File dataFile = SD.open("batTest.txt", FILE_WRITE);
