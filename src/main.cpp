@@ -21,7 +21,6 @@
 const int SDpin = 10;                // Pin 10 on Arduino Uno
 const byte voltagePin = A0;          // Pin to measure voltage
 float finalVoltage;                  // Store measured voltage
-int elapsedTime;                     // Store elapsed time
 int timeCheckInterval = 1000;        // How often to check the voltage (miliseconds)
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7); // initialize the library with the numbers of the interface pins
 
@@ -87,7 +86,6 @@ void loop()
 {
   // Calculate voltage
   finalVoltage = (analogRead(A0) * 5.00) / 1023.00;
-  elapsedTime = millis() / 1000;
 
   // Display values on serial
   Serial.print("Voltage: ");
@@ -95,8 +93,11 @@ void loop()
   Serial.print("V");
   Serial.print("\t");
   Serial.print("Time: ");
-  Serial.print(elapsedTime);
-  Serial.println(" seconds");
+  Serial.print(hour());
+  Serial.print(":");
+  Serial.print(minute());
+  Serial.print(":");
+  Serial.println(second());
 
   // Display battery 1 values on the LCD
   lcd.clear();
