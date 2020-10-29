@@ -6,17 +6,23 @@
   The idea is to provide a constant load on the battery and measure performance for comparisson purpose.
 
   TO DO: Automatically stop measurement when the voltage is zero for more than 1 minute.
+  TO DO: Add blinking character on the LCD to notify that the process is in progress.
+  TO DO: Show elapsed time on the LCD
+  TO DO: Add timer on screen to notify when the next measurement is going to happen.
+  TO DO: Add ability to track multiple batteries at the same time.
 */
 
 #include <Arduino.h>
+#include <LiquidCrystal.h>
 #include <SD.h>
 #include <SPI.h>
 
-const int SDpin = 10;        // Pin 10 on Arduino Uno
-const byte voltagePin = A0;  // Pin to measure voltage
-float finalVoltage;          // Store measured voltage
-int elapsedTime;             // Store elapsed time
-int timeCheckInterval = 500; // How often to check the voltage (miliseconds)
+const int SDpin = 10;                // Pin 10 on Arduino Uno
+const byte voltagePin = A0;          // Pin to measure voltage
+float finalVoltage;                  // Store measured voltage
+int elapsedTime;                     // Store elapsed time
+int timeCheckInterval = 500;         // How often to check the voltage (miliseconds)
+LiquidCrystal lcd(8, 9, 4, 5, 6, 7); // initialize the library with the numbers of the interface pins
 
 void setup()
 {
@@ -24,6 +30,14 @@ void setup()
   Serial.begin(9600);
   pinMode(voltagePin, INPUT); // Input for voltage measurement
   pinMode(SDpin, OUTPUT);     // Set output to the SD card pin
+
+  // LCD start message
+  lcd.begin(16, 2); // Set up the LCD's number of columns and rows: 
+  lcd.print("BATTERY TESTER");
+  lcd.setCursor(0, 1); // Set cursor position
+  lcd.print("By Giuliano");
+  delay(2000);
+  lcd.clear();
 
   // Open serial communications and wait for port to open
   while (!Serial)
@@ -58,6 +72,12 @@ void loop()
   Serial.print("Time: ");
   Serial.print(elapsedTime);
   Serial.println(" seconds");
+
+  // Display values on LCD
+  lcd.clear();
+  lcd.print("BAT1");
+  lcd.setCursor(0, 1);
+  lcd.print(finalVoltage);
 
   // Open the file
   File dataFile = SD.open("batTest.txt", FILE_WRITE);
