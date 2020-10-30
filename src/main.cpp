@@ -58,11 +58,13 @@ void setup()
   Serial.println("Card initialized.");
 }
 
-// Add leading zero if the time value is in the single digit
-void printDigits(int digits)
+// Add leading zero to LCD if the time value is in the single digit
+void printDigitsLCD(int digits)
 {
   if (digits < 10)
+  {
     lcd.print('0');
+  }
   lcd.print(digits);
 }
 
@@ -71,15 +73,40 @@ void printToLCD()
   lcd.setCursor(12, 0);
   lcd.print("TIME");
   lcd.setCursor(8, 1);
-  printDigits(hour());
+  printDigitsLCD(hour());
   lcd.setCursor(10, 1);
   lcd.print(":");
   lcd.setCursor(11, 1);
-  printDigits(minute());
+  printDigitsLCD(minute());
   lcd.setCursor(13, 1);
   lcd.print(":");
   lcd.setCursor(14, 1);
-  printDigits(second());
+  printDigitsLCD(second());
+}
+
+// Add leading zero to Serial if the time value is in the single digit
+void printDigitsSerial(int digits)
+{
+  if (digits < 10)
+  {
+    Serial.print('0');
+  }
+  Serial.print(digits);
+}
+
+void printToSerial()
+{
+  Serial.print("Voltage: ");
+  Serial.print(finalVoltage);
+  Serial.print("V");
+  Serial.print("\t");
+  Serial.print("Time: ");
+  printDigitsSerial(hour());
+  Serial.print(":");
+  printDigitsSerial(minute());
+  Serial.print(":");
+  printDigitsSerial(second());
+  Serial.println();
 }
 
 void loop()
@@ -88,16 +115,7 @@ void loop()
   finalVoltage = (analogRead(A0) * 5.00) / 1023.00;
 
   // Display values on serial
-  Serial.print("Voltage: ");
-  Serial.print(finalVoltage);
-  Serial.print("V");
-  Serial.print("\t");
-  Serial.print("Time: ");
-  Serial.print(hour());
-  Serial.print(":");
-  Serial.print(minute());
-  Serial.print(":");
-  Serial.println(second());
+  printToSerial();
 
   // Display battery 1 values on the LCD
   lcd.clear();
