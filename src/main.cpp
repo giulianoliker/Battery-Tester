@@ -71,6 +71,22 @@ void printDigitsLCD(int digits)
   lcd.print(digits);
 }
 
+void printVoltageToLCD()
+{
+  lcd.clear();
+  lcd.print("1:");
+  lcd.setCursor(2, 0);
+  lcd.print(voltageBatteryOne);
+  lcd.setCursor(6, 0);
+  lcd.print("V");
+  lcd.setCursor(0, 1);
+  lcd.print("2:");
+  lcd.setCursor(2, 1);
+  lcd.print(voltageBatteryTwo);
+  lcd.setCursor(6, 1);
+  lcd.print("V");
+}
+
 void printTimeToLCD()
 {
   lcd.setCursor(12, 0);
@@ -126,20 +142,7 @@ void loop()
   printToSerial();
 
   // Display battery 1 values on the LCD
-  lcd.clear();
-  lcd.print("1:");
-  lcd.setCursor(2, 0);
-  lcd.print(voltageBatteryOne);
-  lcd.setCursor(6, 0);
-  lcd.print("V");
-
-  lcd.setCursor(0, 1);
-  lcd.print("2:");
-  lcd.setCursor(2, 1);
-  lcd.print(voltageBatteryTwo);
-  lcd.setCursor(6, 1);
-  lcd.print("V");
-
+  printVoltageToLCD();
 
   // Display elapsed time on the LCD
   printTimeToLCD();
