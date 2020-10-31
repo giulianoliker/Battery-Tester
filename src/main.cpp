@@ -18,13 +18,18 @@
 #include <SPI.h>
 #include <Time.h>
 
-const int SDpin = 10;                // Pin 10 on Arduino Uno
-const byte batteryOnePin = A0;       // Pin for battery 1
-const byte batteryTwoPin = A1;       // Pin for battery 2
-float voltageBatteryOne;             // Store measured voltage for battery 1
-float voltageBatteryTwo;             // Store measured voltage for battery 2
-int timeCheckInterval = 1000;        // How often to check the voltage (miliseconds)
-LiquidCrystal lcd(8, 9, 4, 5, 6, 7); // initialize the library with the numbers of the interface pins
+const int SDpin = 10;                           // Pin 10 on Arduino Uno
+const byte batteryOnePin = A0;                  // Pin for battery 1
+const byte batteryTwoPin = A1;                  // Pin for battery 2
+float voltageBatteryOne;                        // Store measured voltage for battery 1
+float voltageBatteryTwo;                        // Store measured voltage for battery 2
+int voltageCheckInterval = 1000;                // How often to check the voltage (miliseconds)
+int dataSaveInterval = 5000;                    // How often to log data to the SD card
+int clockRefreshInterval = 1000;                // How often to refresh the clock
+unsigned long previousVoltageCheckInterval = 0; // declare variable for interval function
+unsigned long previousDataSaveInterval = 0;     // declare variable for interval function
+unsigned long previousClockRefreshInterval = 0; // declare variable for interval function
+LiquidCrystal lcd(8, 9, 4, 5, 6, 7);            // initialize the library with the numbers of the interface pins
 
 void setup()
 {
@@ -134,39 +139,54 @@ void printToSerial()
 
 void loop()
 {
-  // Calculate voltage
-  voltageBatteryOne = (analogRead(A0) * 5.00) / 1023.00;
-  voltageBatteryTwo = (analogRead(A1) * 5.00) / 1023.00;
+  unsigned long currentTime = millis();
 
-  // Display volate and time on serial
-  printToSerial();
-
-  // Display battery voltage on the LCD
-  printVoltageToLCD();
-
-  // Display elapsed time on the LCD
-  printTimeToLCD();
-
-  // Open the file
-  File dataFile = SD.open("batTest.txt", FILE_WRITE);
-
-  // If the file is available, write to it
-  if (dataFile)
+  if (currentTime - previousVoltageCheckInterval >= voltageCheckInterval)
   {
-    dataFile.print(hour());
-    dataFile.print(":");
-    dataFile.print(minute());
-    dataFile.print(",");
-    dataFile.print(voltageBatteryOne);
-    dataFile.print(",");
-    dataFile.println(voltageBatteryTwo);
-    dataFile.close();
-  }
-  // If unable to read the file, display an error
-  else
-  {
-    Serial.println("Error opening file on the SD card!");
+    previousVoltageCheckInterval = currentTime;
+
+    // Calculate voltage
+    voltageBatteryOne = (analogRead(A0) * 5.00) / 1023.00;
+    voltageBatteryTwo = (analogRead(A1) * 5.00) / 1023.00;
+
+    // Display volate and time on serial
+    printToSerial();
+
+    // Display battery voltage on the LCD
+    printVoltageToLCD();
   }
 
-  delay(timeCheckInterval);
+  if (currentTime - previousDataSaveInterval >= dataSaveInterval)
+  {
+    previousDataSaveInterval = currentTime;
+
+    // Open the file
+    File dataFile = SD.open("batTest.txt", FILE_WRITE);
+
+    // If the file is available, write to it
+    if (dataFile)
+    {
+      dataFile.print(hour());
+      dataFile.print(":");
+      dataFile.print(minute());
+      dataFile.print(",");
+      dataFile.print(voltageBatteryOne);
+      dataFile.print(",");
+      dataFile.println(voltageBatteryTwo);
+      dataFile.close();
+    }
+    // If unable to read the file, display an error
+    else
+    {
+      Serial.println("Error opening file on the SD card!");
+    }
+  }
+
+  if (currentTime - previousClockRefreshInterval >= clockRefreshInterval)
+  {
+    previousClockRefreshInterval = currentTime;
+    
+    // Display elapsed time on the LCD
+    printTimeToLCD();
+  }
 }
