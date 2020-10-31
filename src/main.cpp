@@ -5,8 +5,8 @@
   This program measures the voltage of the battery and logs the time and the voltage into the file on the SD card in predetermied intervals.
   The idea is to provide a constant load on the battery and measure performance for comparisson purpose.
 
+  TO DO: During startup, display data saving time interval. ("Save data every 5 min 30 sec")
   TO DO: Automatically stop measurement when the voltage is zero for more than 1 minute.
-  TO DO: Add timer on screen to notify when the next measurement is going to happen.
   TO DO: Display error messages on the LCD
 */
 
@@ -43,6 +43,24 @@ void setup()
   lcd.setCursor(0, 1);
   lcd.print("By Giuliano");
   delay(2000);
+  lcd.clear();
+
+  // LCD data logging interval message
+  int saveSec = dataSaveInterval / 1000;
+  int saveMin = saveSec / 60;
+  saveSec %= 60;
+  saveMin %= 60;  
+  lcd.setCursor(0,0);
+  lcd.print("Save data every");
+  lcd.setCursor(0,1);
+  lcd.print(saveMin);
+  lcd.setCursor(3,1);
+  lcd.print("min");
+  lcd.setCursor(7,1);
+  lcd.print(saveSec);
+  lcd.setCursor(10,1);
+  lcd.print("sec");
+  delay(5000);
   lcd.clear();
 
   // Open serial communications and wait for port to open
