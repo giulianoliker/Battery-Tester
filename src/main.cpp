@@ -137,6 +137,32 @@ void printToSerial()
   Serial.println();
 }
 
+void saveToSD()
+{
+  // Open the file
+  File dataFile = SD.open("batTest.txt", FILE_WRITE);
+
+  // If the file is available, write to it
+  if (dataFile)
+  {
+    dataFile.print(hour());
+    dataFile.print(":");
+    dataFile.print(minute());
+    dataFile.print(":");
+    dataFile.print(second());
+    dataFile.print(",");
+    dataFile.print(voltageBatteryOne);
+    dataFile.print(",");
+    dataFile.println(voltageBatteryTwo);
+    dataFile.close();
+  }
+  // If unable to read the file, display an error
+  else
+  {
+    Serial.println("Error opening file on the SD card!");
+  }
+}
+
 void loop()
 {
   unsigned long currentTime = millis();
@@ -160,28 +186,8 @@ void loop()
   {
     previousDataSaveInterval = currentTime;
 
-    // Open the file
-    File dataFile = SD.open("batTest.txt", FILE_WRITE);
-
-    // If the file is available, write to it
-    if (dataFile)
-    {
-      dataFile.print(hour());
-      dataFile.print(":");
-      dataFile.print(minute());
-      dataFile.print(":");
-      dataFile.print(second());
-      dataFile.print(",");
-      dataFile.print(voltageBatteryOne);
-      dataFile.print(",");
-      dataFile.println(voltageBatteryTwo);
-      dataFile.close();
-    }
-    // If unable to read the file, display an error
-    else
-    {
-      Serial.println("Error opening file on the SD card!");
-    }
+    // Save data to SD card
+    saveToSD();
   }
 
   if (currentTime - previousClockRefreshInterval >= clockRefreshInterval)
