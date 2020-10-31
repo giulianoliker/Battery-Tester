@@ -6,9 +6,7 @@
   The idea is to provide a constant load on the battery and measure performance for comparisson purpose.
 
   TO DO: Automatically stop measurement when the voltage is zero for more than 1 minute.
-  TO DO: Add blinking character on the LCD to notify that the process is in progress.
   TO DO: Add timer on screen to notify when the next measurement is going to happen.
-  TO DO: Add ability to track multiple batteries at the same time.
   TO DO: Display error messages on the LCD
 */
 
@@ -167,6 +165,7 @@ void loop()
 {
   unsigned long currentTime = millis();
 
+  // Calculate voltage and display on serial and LCD
   if (currentTime - previousVoltageCheckInterval >= voltageCheckInterval)
   {
     previousVoltageCheckInterval = currentTime;
@@ -182,6 +181,7 @@ void loop()
     printVoltageToLCD();
   }
 
+  // Save data to the SD card
   if (currentTime - previousDataSaveInterval >= dataSaveInterval)
   {
     previousDataSaveInterval = currentTime;
@@ -190,6 +190,7 @@ void loop()
     saveToSD();
   }
 
+  // Display time on the LCD
   if (currentTime - previousClockRefreshInterval >= clockRefreshInterval)
   {
     previousClockRefreshInterval = currentTime;
