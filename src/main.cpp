@@ -138,10 +138,10 @@ void loop()
   voltageBatteryOne = (analogRead(A0) * 5.00) / 1023.00;
   voltageBatteryTwo = (analogRead(A1) * 5.00) / 1023.00;
 
-  // Display values on serial
+  // Display volate and time on serial
   printToSerial();
 
-  // Display battery 1 values on the LCD
+  // Display battery voltage on the LCD
   printVoltageToLCD();
 
   // Display elapsed time on the LCD
@@ -158,6 +158,8 @@ void loop()
     dataFile.print(minute());
     dataFile.print(",");
     dataFile.println(voltageBatteryOne);
+    dataFile.print(",");
+    dataFile.println(voltageBatteryTwo);
     dataFile.close();
   }
   // If unable to read the file, display an error
