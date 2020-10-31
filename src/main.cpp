@@ -22,7 +22,7 @@ const byte batteryTwoPin = A1;                  // Pin for battery 2
 float voltageBatteryOne;                        // Store measured voltage for battery 1
 float voltageBatteryTwo;                        // Store measured voltage for battery 2
 int voltageCheckInterval = 1000;                // How often to check the voltage (miliseconds)
-int dataSaveInterval = 5000;                    // How often to log data to the SD card
+unsigned long dataSaveInterval = 1800000;       // How often to log data to the SD card
 int clockRefreshInterval = 1000;                // How often to refresh the clock
 unsigned long previousVoltageCheckInterval = 0; // declare variable for interval function
 unsigned long previousDataSaveInterval = 0;     // declare variable for interval function
@@ -46,10 +46,8 @@ void setup()
   lcd.clear();
 
   // LCD data logging interval message
-  int saveSec = dataSaveInterval / 1000;
-  int saveMin = saveSec / 60;
-  saveSec %= 60;
-  saveMin %= 60;
+  int saveSec = dataSaveInterval / 1000 % 60;
+  int saveMin = ((dataSaveInterval / 1000) - saveSec) / 60;
   lcd.setCursor(0, 0);
   lcd.print("Save data every");
   lcd.setCursor(0, 1);
