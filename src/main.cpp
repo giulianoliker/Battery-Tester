@@ -71,7 +71,7 @@ void printDigitsLCD(int digits)
   lcd.print(digits);
 }
 
-void printToLCD()
+void printTimeToLCD()
 {
   lcd.setCursor(12, 0);
   lcd.print("TIME");
@@ -142,7 +142,7 @@ void loop()
 
 
   // Display elapsed time on the LCD
-  printToLCD();
+  printTimeToLCD();
 
   // Open the file
   File dataFile = SD.open("batTest.txt", FILE_WRITE);
