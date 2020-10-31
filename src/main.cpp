@@ -169,6 +169,8 @@ void loop()
       dataFile.print(hour());
       dataFile.print(":");
       dataFile.print(minute());
+      dataFile.print(":");
+      dataFile.print(second());
       dataFile.print(",");
       dataFile.print(voltageBatteryOne);
       dataFile.print(",");
@@ -185,7 +187,7 @@ void loop()
   if (currentTime - previousClockRefreshInterval >= clockRefreshInterval)
   {
     previousClockRefreshInterval = currentTime;
-    
+
     // Display elapsed time on the LCD
     printTimeToLCD();
   }
