@@ -157,7 +157,7 @@ void loop()
     dataFile.print(":");
     dataFile.print(minute());
     dataFile.print(",");
-    dataFile.println(voltageBatteryOne);
+    dataFile.print(voltageBatteryOne);
     dataFile.print(",");
     dataFile.println(voltageBatteryTwo);
     dataFile.close();
